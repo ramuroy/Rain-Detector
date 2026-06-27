@@ -1,26 +1,31 @@
-#define RAIN_SENSOR A0  // Rain sensor connected to Analog pin A0
-#define LED_PIN 7       // LED connected to digital pin 7
-#define BUZZER_PIN 8    // Buzzer connected to digital pin 8
+#define RAIN_SENSOR A0  // Rain sensor on analog pin A0
+#define LED_PIN 7       // LED on digital pin 7
+#define BUZZER_PIN 8    // Buzzer on digital pin 8
+
+// The rain sensor reads LOWER as it gets wetter. Hysteresis band: trigger the
+// alert below RAIN_ON, clear it only after the reading rises past RAIN_OFF, so
+// the LED/buzzer don't chatter when the value hovers around the threshold.
+#define RAIN_ON 480
+#define RAIN_OFF 520
+
+bool alerting = false;
 
 void setup() {
-    pinMode(RAIN_SENSOR, INPUT);  // Set rain sensor as input
-    pinMode(LED_PIN, OUTPUT);     // Set LED as output
-    pinMode(BUZZER_PIN, OUTPUT);  // Set buzzer as output
-    Serial.begin(9600);           // Initialize serial communication
+    pinMode(LED_PIN, OUTPUT);     // analogRead() needs no pinMode on A0
+    pinMode(BUZZER_PIN, OUTPUT);
+    Serial.begin(9600);
 }
 
 void loop() {
-    int rainValue = analogRead(RAIN_SENSOR);  // Read sensor value
+    int rainValue = analogRead(RAIN_SENSOR);
     Serial.print("Rain Sensor Value: ");
-    Serial.println(rainValue); // Print sensor value for debugging
+    Serial.println(rainValue);
 
-    if (rainValue < 500) {  // Adjust threshold as per sensor output
-        digitalWrite(LED_PIN, HIGH);   // Turn on LED
-        digitalWrite(BUZZER_PIN, HIGH); // Activate buzzer
-    } else {
-        digitalWrite(LED_PIN, LOW);    // Turn off LED
-        digitalWrite(BUZZER_PIN, LOW); // Deactivate buzzer
-    }
+    if (!alerting && rainValue < RAIN_ON) alerting = true;
+    else if (alerting && rainValue > RAIN_OFF) alerting = false;
 
-    delay(500);  // Small delay to avoid frequent toggling
+    digitalWrite(LED_PIN, alerting ? HIGH : LOW);
+    digitalWrite(BUZZER_PIN, alerting ? HIGH : LOW);
+
+    delay(200);
 }
