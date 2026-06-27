@@ -6,16 +6,27 @@ This project is a **simple and effective Rain Detection System** using an **Ardu
 
 ## 🛠️ **Components Used**
 - 🔹 **Arduino Uno** – Microcontroller that processes sensor data and controls outputs.  
-- 🔹 **Rain Sensor** – Detects rain and sends signals to the Arduino.  
-- 🔹 **LED** – Provides a visual indication of rainfall.  
-- 🔹 **Buzzer** – Emits a sound alert when rain is detected.  
+- 🔹 **Rain Sensor Module** – Detects rain and sends an analog signal to the Arduino.  
+- 🔹 **LED (+ ~220–330 Ω resistor)** – Visual indication of rainfall.  
+- 🔹 **Buzzer (active)** – Audible alert when rain is detected.  
+
+---
+
+## 🔌 **Wiring**
+| Arduino Pin | Connects to |
+|-------------|-------------|
+| A0 | Rain sensor **analog out (AO)** (sensor VCC → 5V, GND → GND) |
+| D7 | LED **+** via a ~220–330 Ω resistor (LED − → GND) |
+| D8 | Buzzer **+** (buzzer − → GND) |
+
+> The rain sensor reads **lower** as it gets wetter. The trip point (≈ 500, with a **hysteresis band** so the alert doesn't chatter in light drizzle) is **uncalibrated** — tune `RAIN_ON/RAIN_OFF` for your sensor. The sketch assumes an **active** buzzer; for a passive piezo, drive it with `tone()` instead of `digitalWrite()`.
 
 ---
 
 ## ⚙️ **How It Works**
-1️⃣ The **rain sensor detects water droplets** and sends an analog signal to the Arduino.  
-2️⃣ If the **rain sensor value falls below 500**, the **Arduino triggers the buzzer and LED**.  
-3️⃣ When **rain stops**, the system **automatically resets**, turning OFF the LED and buzzer.  
+1️⃣ The **rain sensor** outputs an analog value that falls as water lands on it.  
+2️⃣ When the value drops past the trip point, the **Arduino turns ON the LED and buzzer**.  
+3️⃣ When **rain stops**, hysteresis holds the state until the surface dries, then **resets automatically**.  
 
 ---
 
@@ -23,8 +34,8 @@ This project is a **simple and effective Rain Detection System** using an **Ardu
 ✅ **Detects rain** using a rain sensor  
 ✅ **Turns ON an LED** for a visual alert  
 ✅ **Activates a buzzer** for an audible alert  
-✅ **Automatically resets** when rain stops  
-✅ **Can be integrated into smart automation systems**
+✅ **Hysteresis prevents alert chatter** near the threshold  
+✅ **Can be integrated into smart automation systems**  
 
 ---
 
@@ -36,4 +47,3 @@ This project is a **simple and effective Rain Detection System** using an **Ardu
 🔹 **Vehicle Rain Alert** – Notifies car/bike owners to cover their vehicles.  
 🔹 **Agricultural Monitoring** – Helps farmers detect rainfall for crop protection.  
 🔹 **Industrial Equipment Protection** – Prevents damage to outdoor machinery.  
-🔹 **Smart Roof Systems** – Activates retractable roofs in stadiums, homes, or restaurants.
